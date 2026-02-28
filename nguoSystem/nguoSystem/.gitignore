@@ -1,0 +1,61 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django
+*.log
+local_settings.py
+/media
+/staticfiles
+db.sqlite3
+*.sqlite3
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+*.bak
+*.orig
+*.rej
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node/Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
