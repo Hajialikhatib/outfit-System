@@ -1,40 +1,39 @@
 #!/bin/bash
+set -e
 
 # ==========================================
 # Nguo System - Production Backend Start Script
+# Works locally (with .venv) AND on Render.com
 # ==========================================
 
-echo "🚀 Starting Nguo System Backend (Production)..."
-echo ""
+echo "Starting Nguo System Backend (Production)..."
 
-# Navigate to backend directory
+# Navigate to the directory that contains this script
 cd "$(dirname "$0")"
 
-# Check if virtual environment exists
-if [ ! -d "../.venv" ]; then
-    echo "❌ Virtual environment not found at ../.venv"
-    echo "Please create and activate the virtual environment first:"
-    echo "  python -m venv .venv"
-    echo "  source .venv/bin/activate"
-    echo "  pip install -r requirements.txt"
-    exit 1
+# ── Activate local venv only when running outside Render ──────────────────
+if [ -z "$RENDER" ]; then
+    VENV_PATH="../.venv"
+    if [ -d "$VENV_PATH" ]; then
+        echo "Activating local virtual environment..."
+        source "$VENV_PATH/bin/activate"
+    else
+        echo "Warning: no local .venv found – using system Python"
+    fi
 fi
 
-# Activate virtual environment
-source ../.venv/bin/activate
-
-# Set environment variables for production
+# ── Set production env vars (Render injects its own; these are local fallbacks)
 export ENVIRONMENT=production
-export DEBUG=False
+export DEBUG=${DEBUG:-False}
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-nguoSystem.deployment}
 
-# Collect static files (run this once during deployment)
-echo "📦 Collecting static files..."
-python manage.py collectstatic --noinput --clear
+# ── Determine port (Render sets $PORT automatically) ─────────────────────
+PORT=${PORT:-8000}
 
-# Run migrations (run this once during deployment)
-echo "🗄️ Running migrations..."
-python manage.py migrate
-
-# Start Gunicorn
-echo "🔄 Starting Gunicorn on port 8000..."
-gunicorn -c gunicorn_config.py nguoSystem.wsgi:application
+echo "Starting Gunicorn on port $PORT..."
+exec gunicorn nguoSystem.wsgi:application \
+    --bind "0.0.0.0:$PORT" \
+    --workers "${WEB_CONCURRENCY:-2}" \
+    --threads 2 \
+    --timeout 120 \
+    --log-level warning

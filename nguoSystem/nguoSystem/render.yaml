@@ -28,13 +28,7 @@ services:
       python manage.py collectstatic --noinput
       python manage.py migrate --noinput
 
-    startCommand: >
-      gunicorn nguoSystem.wsgi:application
-      --bind 0.0.0.0:$PORT
-      --workers 2
-      --threads 2
-      --timeout 120
-      --log-level warning
+    startCommand: bash start-backend-prod.sh
 
     healthCheckPath: /api/
 
