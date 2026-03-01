@@ -21,7 +21,7 @@ services:
     runtime: python
     plan: free                 # or "starter" / "standard" for production
     region: oregon             # change to the region closest to your users
-    rootDir: nguoSystem/nguoSystem/backend
+    rootDir: backend
 
     buildCommand: |
       pip install -r requirements.txt
@@ -69,7 +69,7 @@ services:
     runtime: static
     plan: free
     region: oregon
-    rootDir: nguoSystem/nguoSystem/frontend
+    rootDir: frontend
 
     buildCommand: npm ci && npm run build
 
